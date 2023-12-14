@@ -525,8 +525,12 @@ new_df2 = new_df %>%
 ###################
 
 # Only take necessary variables for analysis
+# new_df3 = new_df2 %>%
+#   dplyr::select(-c(plang:prace_other,childasd:cotimean_34wk,bpm_att_p:smoke_exposure_5yr
+#                    ,language:trace_other,num_cigs_30,num_e_cigs_30,num_mj_30,num_alc_30))
+
 new_df3 = new_df2 %>%
-  dplyr::select(-c(plang:prace_other,childasd:cotimean_34wk,bpm_att_p:smoke_exposure_5yr
+  dplyr::select(-c(plang:prace_other,childasd:mom_smoke_pp6mo,bpm_att_p:smoke_exposure_5yr
                    ,language:trace_other,num_cigs_30,num_e_cigs_30,num_mj_30,num_alc_30))
 
 #############################
@@ -543,6 +547,28 @@ categorical_var = c('psex','employ','pedu','income','tsex','cig_ever'
 # Make tableone to get the population characteristic
 pop_characteristic = CreateTableOne(data = new_df3, factorVars = categorical_var)
 pop_characteristic
+
+# Statistic summary for continuous variables
+summary(new_df3 %>% dplyr::select(-categorical_var))
+
+#######################################################
+### MOM & BABY COTININE vs POSTNATAL SMOKE EXPOSURE ###
+#######################################################
+
+exposure_detail <- c(`0` = 'No Postnatal Smoke Exposure'
+                     , `1` = 'Got Postnatal Smoke Exposure')
+
+ggplot(subset(new_df3, !is.na(postnatal_exposure))) + 
+  geom_point(aes(x = cotimean_pp6mo, y = cotimean_pp6mo_baby), ylim = 0) +
+  facet_grid(postnatal_exposure~., labeller = as_labeller(exposure_detail)) + 
+  theme_bw() + 
+  labs(title = 'Mom & Baby Cotinine Level vs Postnatal Smoke Exposure'
+       ,x = 'Mom Cotinine Level 6 Month After Birth'
+       ,y = 'Baby Cotinine Level 6 Month After Birth'
+       ,) +
+  theme(legend.position = 'bottom'
+        , plot.title = element_text(hjust = 0.5)
+        , plot.caption = element_text(hjust = 0.5))
 
 ####################################
 ### INTERRELATEDNESS BETWEEN EXT ###
@@ -730,7 +756,8 @@ non_EXT = c('bpm_att_a','bpm_int_a','bpm_ext_a','erq_cog_a','erq_exp_a'
             ,'mom_postnatal_smoke_consistency','prenatal_exposure_consistency'
             ,'postnatal_exposure_consistency','pmq_parental_knowledge'
             ,'pmq_child_disclosure','pmq_parental_solicitation'
-            ,'pmq_parental_control','tage','age_gap')
+            ,'pmq_parental_control','tage','age_gap','cotimean_34wk'
+            ,'cotimean_pp6mo_baby', 'cotimean_pp6mo')
 
 # Make correlation matrix
 cor_mat = cor(new_df3[,c(EXT,non_EXT)]
@@ -772,6 +799,9 @@ cor_df %>%
                                 ,variable1=='pmq_child_disclosure' ~ 'Child Disclosure'
                                 ,variable1=='pmq_parental_solicitation' ~ 'Parental Solicitation'
                                 ,variable1=='pmq_parental_control' ~ 'Parental Control'
+                                ,variable1=='cotimean_34wk' ~ 'Prenatal Maternal Cotinine'
+                                ,variable1=='cotimean_pp6mo_baby' ~ 'Baby Cotinine 6mo'
+                                ,variable1=='cotimean_pp6mo' ~ 'Postnatal Maternal Cotinine 6mo'
                                 ,variable1=='age_gap' ~ 'Parent Child Age Gap')) %>%
   arrange(desc(variable2)) %>%
   rename('Other Variables' = 'variable1'
@@ -793,11 +823,11 @@ cor_df %>%
 # Make plot of all EXT variables with SDP/Other potential confounder found previously
 
 ### SWAN INATTENTIVE ###
-swan_inattentive_p1 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke))) +
-  geom_boxplot(aes(x=as.factor(mom_postnatal_smoke), y=swan_inattentive)
+swan_inattentive_p1 = ggplot(new_df3) +
+  geom_boxplot(aes(x=as.factor(pmq_child_disclosure), y=swan_inattentive)
                , alpha = 0.5, fill = 'firebrick', color = 'firebrick') + 
   theme_bw() + 
-  labs(x = 'Mom Postnatal Smoking'
+  labs(x = 'Child Disclosure'
        ,y = 'ADHD Inattentive Score'
        ,) +
   theme(legend.position = 'bottom'
@@ -806,7 +836,7 @@ swan_inattentive_p1 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke))) +
         , plot.caption = element_text(hjust = 0.5))
 # swan_inattentive_p1
 
-swan_inattentive_p2 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke))) +
+swan_inattentive_p2 = ggplot(new_df3) +
   geom_jitter(aes(x=bpm_att_a, y=swan_inattentive), color = 'grey') +
   geom_smooth(aes(x=bpm_att_a, y=swan_inattentive), method = 'lm'
               , alpha = 0.5, fill = 'firebrick', color = 'firebrick') + 
@@ -823,7 +853,7 @@ swan_inattentive_p2 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke))) +
         , plot.caption = element_text(hjust = 0.5))
 # swan_inattentive_p2
 
-swan_inattentive_p3 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke))) +
+swan_inattentive_p3 = ggplot(new_df3) +
   geom_jitter(aes(x=bpm_int_a, y=swan_inattentive), color = 'grey') +
   geom_smooth(aes(x=bpm_int_a, y=swan_inattentive), method = 'lm'
               , alpha = 0.5, fill = 'firebrick', color = 'firebrick') + 
@@ -885,68 +915,8 @@ swan_hyperactive_p3 = ggplot(subset(new_df3, !is.na(mom_prenatal_smoke))) +
         , plot.caption = element_text(hjust = 0.5))
 # swan_hyperactive_p3
 
-swan_hyperactive_p4 = ggplot(subset(new_df3, !is.na(mom_prenatal_smoke))) +
-  geom_jitter(aes(x=bpm_int_a, y=swan_hyperactive), color = 'grey') +
-  geom_smooth(aes(x=bpm_int_a, y=swan_hyperactive), method = 'lm'
-              , alpha = 0.5, fill = 'salmon2', color = 'salmon2') + 
-  facet_grid(mom_prenatal_smoke~.
-             , labeller = as_labeller(c(`0`='Mom not smoking (Pre)'
-                                        ,`1`='Mom smoking (Pre)'))) +
-  theme_bw() + 
-  labs(x = 'Parent Internalizing Problem Score'
-       ,y = 'ADHD Hyperactive Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# swan_hyperactive_p4
-
-swan_hyperactive_p5 = ggplot(subset(new_df3, !is.na(mom_prenatal_smoke))) +
-  geom_jitter(aes(x=erq_exp_a, y=swan_hyperactive), color = 'grey') +
-  geom_smooth(aes(x=erq_exp_a, y=swan_hyperactive), method = 'lm'
-              , alpha = 0.5, fill = 'salmon2', color = 'salmon2') + 
-  facet_grid(mom_prenatal_smoke~.
-             , labeller = as_labeller(c(`0`='Mom not smoking (Pre)'
-                                        ,`1`='Mom smoking (Pre)'))) +
-  theme_bw() + 
-  labs(x = 'Parent Cognitive Reappraisal Score'
-       ,y = 'ADHD Hyperactive Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# swan_hyperactive_p5
-
 ### CHILD ATTENTION PROBLEM SCORE ###
-bpm_att_p1 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
-  geom_boxplot(aes(x=as.factor(prenatal_exposure), y=bpm_att)
-               , alpha = 0.5, fill = 'lightgoldenrod2', color = 'lightgoldenrod2') + 
-  theme_bw() + 
-  labs(x = 'Prenatal Smoke Exposure'
-       ,y = 'Child Attention Problem Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# bpm_att_p1
-
-bpm_att_p2 = ggplot(subset(new_df3, !is.na(race))) +
-  geom_boxplot(aes(x=as.factor(race), y=bpm_att)
-               , alpha = 0.5, fill = 'lightgoldenrod2', color = 'lightgoldenrod2') + 
-  theme_bw() + 
-  labs(x = 'Race'
-       ,y = 'Child Attention Problem Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# bpm_att_p2
-
-bpm_att_p3 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
+bpm_att_p1 = ggplot(new_df3) +
   geom_jitter(aes(x=bpm_att_a, y=bpm_att), color = 'grey') +
   geom_smooth(aes(x=bpm_att_a, y=bpm_att), method = 'lm'
               , alpha = 0.5, fill = 'lightgoldenrod2', color = 'lightgoldenrod2') + 
@@ -961,9 +931,9 @@ bpm_att_p3 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# bpm_att_p3
+# bpm_att_p1
 
-bpm_att_p4 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
+bpm_att_p2 = ggplot(new_df3) +
   geom_jitter(aes(x=bpm_int_a, y=bpm_att), color = 'grey') +
   geom_smooth(aes(x=bpm_int_a, y=bpm_att), method = 'lm'
               , alpha = 0.5, fill = 'lightgoldenrod2', color = 'lightgoldenrod2') + 
@@ -978,7 +948,7 @@ bpm_att_p4 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# bpm_att_p4
+# bpm_att_p2
 
 ### CHILD INTERNALIZING PROBLEM SCORE ###
 bpm_int_p1 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
@@ -994,34 +964,7 @@ bpm_int_p1 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
         , plot.caption = element_text(hjust = 0.5))
 # bpm_int_p1
 
-bpm_int_p2 = ggplot(subset(new_df3, !is.na(race))) +
-  geom_boxplot(aes(x=as.factor(race), y=bpm_int)
-               , alpha = 0.5, fill = 'springgreen3', color = 'springgreen3') + 
-  theme_bw() + 
-  labs(x = 'Race'
-       ,y = 'Child Internalizing Problem Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# bpm_int_p2
-
-bpm_int_p3 = ggplot(subset(new_df3, !is.na(employ))) +
-  geom_boxplot(aes(x=as.factor(employ), y=bpm_int)
-               , alpha = 0.5, fill = 'springgreen3', color = 'springgreen3') + 
-  scale_x_discrete(labels=c('No', 'Part-Time', 'Full-Time')) +
-  theme_bw() + 
-  labs(x = 'Parent Employment Status'
-       ,y = 'Child Internalizing Problem Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# bpm_int_p3
-
-bpm_int_p4 = ggplot(new_df3) +
+bpm_int_p2 = ggplot(new_df3) +
   geom_jitter(aes(x=prenatal_exposure_consistency, y=bpm_int), color = 'grey') +
   geom_smooth(aes(x=prenatal_exposure_consistency, y=bpm_int), method = 'lm'
               , alpha = 0.5, fill = 'springgreen3', color = 'springgreen3') + 
@@ -1033,7 +976,7 @@ bpm_int_p4 = ggplot(new_df3) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# bpm_int_p4
+# bpm_int_p2
 
 ### CHILD EXTERNALIZING PROBLEM SCORE ###
 bpm_ext_p1 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
@@ -1084,33 +1027,7 @@ bpm_ext_p3 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
 # bpm_ext_p3
 
 ### CHILD EXPRESSIVE SUPRESSION ###
-erq_exp_p1 = ggplot(subset(new_df3, !is.na(mom_prenatal_smoke))) +
-  geom_boxplot(aes(x=as.factor(mom_prenatal_smoke), y=bpm_ext)
-               , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
-  theme_bw() + 
-  labs(x = 'Prenatal Mom Smoking'
-       ,y = 'Child Expressive Supression Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p1
-
-erq_exp_p2 = ggplot(subset(new_df3, !is.na(prenatal_exposure))) +
-  geom_boxplot(aes(x=as.factor(prenatal_exposure), y=bpm_ext)
-               , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
-  theme_bw() + 
-  labs(x = 'Prenatal Smoke Exposure'
-       ,y = 'Child Expressive Supression Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p2
-
-erq_exp_p3 = ggplot(subset(new_df3, !is.na(postnatal_exposure))) +
+erq_exp_p1 = ggplot(subset(new_df3, !is.na(postnatal_exposure))) +
   geom_boxplot(aes(x=as.factor(postnatal_exposure), y=bpm_ext)
                , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
   theme_bw() + 
@@ -1121,9 +1038,9 @@ erq_exp_p3 = ggplot(subset(new_df3, !is.na(postnatal_exposure))) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p3
+# erq_exp_p1
 
-erq_exp_p4 = ggplot(subset(new_df3, !is.na(prenatal_exposure_consistency))) +
+erq_exp_p2 = ggplot(subset(new_df3, !is.na(prenatal_exposure_consistency))) +
   geom_jitter(aes(x=prenatal_exposure_consistency, y=bpm_ext), color = 'grey') +
   geom_smooth(aes(x=prenatal_exposure_consistency, y=bpm_ext), method = 'lm'
               , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
@@ -1135,9 +1052,9 @@ erq_exp_p4 = ggplot(subset(new_df3, !is.na(prenatal_exposure_consistency))) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p4
+# erq_exp_p2
 
-erq_exp_p5 = ggplot(subset(new_df3, !is.na(postnatal_exposure_consistency))) +
+erq_exp_p3 = ggplot(subset(new_df3, !is.na(postnatal_exposure_consistency))) +
   geom_jitter(aes(x=postnatal_exposure_consistency, y=bpm_ext), color = 'grey') +
   geom_smooth(aes(x=postnatal_exposure_consistency, y=bpm_ext), method = 'lm'
               , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
@@ -1149,21 +1066,7 @@ erq_exp_p5 = ggplot(subset(new_df3, !is.na(postnatal_exposure_consistency))) +
         ,text = element_text(size=7)
         , plot.title = element_text(hjust = 0.5)
         , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p5
-
-erq_exp_p6 = ggplot(subset(new_df3, !is.na(pnum_substance_used))) +
-  geom_jitter(aes(x=pnum_substance_used, y=bpm_ext), color = 'grey') +
-  geom_smooth(aes(x=pnum_substance_used, y=bpm_ext), method = 'lm'
-              , alpha = 0.5, fill = 'hotpink2', color = 'hotpink2') + 
-  theme_bw() + 
-  labs(x = 'Parent Substance Types Used'
-       ,y = 'Child Expressive Supression Score'
-       ,) +
-  theme(legend.position = 'bottom'
-        ,text = element_text(size=7)
-        , plot.title = element_text(hjust = 0.5)
-        , plot.caption = element_text(hjust = 0.5))
-# erq_exp_p6
+# erq_exp_p3
 
 ### CHILD SUBSTANCE TYPES USED ###
 subs_used_p1 = ggplot(subset(new_df3, !is.na(mom_postnatal_smoke_consistency))) +
@@ -1238,13 +1141,11 @@ subs_used_p5 = ggplot(subset(new_df3, !is.na(bpm_att_a))) +
 
 # Combine EXT variable plots
 patchwork1 = (swan_inattentive_p1 + swan_inattentive_p2 + swan_inattentive_p3)
-patchwork2 = (swan_hyperactive_p1 + swan_hyperactive_p2 + swan_hyperactive_p3 
-              + swan_hyperactive_p4 + swan_hyperactive_p5)
-patchwork3 = (bpm_att_p1 + bpm_att_p2 + bpm_att_p3 + bpm_att_p4)
-patchwork4 = (bpm_int_p1 + bpm_int_p2 + bpm_int_p3 + bpm_int_p4)
+patchwork2 = (swan_hyperactive_p1 + swan_hyperactive_p2 + swan_hyperactive_p3)
+patchwork3 = (bpm_att_p1 + bpm_att_p2)
+patchwork4 = (bpm_int_p1 + bpm_int_p2)
 patchwork5 = (bpm_ext_p1 + bpm_ext_p2 + bpm_ext_p3)
-patchwork6 = (erq_exp_p1 + erq_exp_p2 + erq_exp_p3 + erq_exp_p4 
-              +erq_exp_p5 + erq_exp_p6)
+patchwork6 = (erq_exp_p1 + erq_exp_p2 + erq_exp_p3)
 patchwork7 = (subs_used_p1 + subs_used_p2 + subs_used_p3 + subs_used_p4
               +subs_used_p5)
 
