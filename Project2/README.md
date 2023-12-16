@@ -20,29 +20,29 @@ The full code for this project can be found in the code folder and the explanati
 
 ## Software and Packages
 
-Version of software and packages used in the analysis:
-R version 4.2.2 (2022-10-31)  
-lme4_1.1-30
-pROC_1.18.0
-glmnet_4.1-8
-Matrix_1.5-1
-mice_3.15.0
-splitstackshape_1.4.8 patchwork_1.1.2
-corrplot_0.92
-GGally_2.1.2
-kableExtra_1.3.4
-gtsummary_1.7.2
-gt_0.9.0
-naniar_1.0.0
-lubridate_1.9.3
-forcats_1.0.0 
-stringr_1.5.0
-dplyr_1.1.3
-purrr_1.0.1
-readr_2.1.4
-tidyr_1.3.0
-tibble_3.2.1
-ggplot2_3.4.3
-tidyverse_2.0.0
-formatR_1.14
+Version of software and packages used in the analysis:  
+R version 4.2.2 (2022-10-31)    
+lme4_1.1-30  
+pROC_1.18.0  
+glmnet_4.1-8  
+Matrix_1.5-1  
+mice_3.15.0  
+splitstackshape_1.4.8 patchwork_1.1.2  
+corrplot_0.92  
+GGally_2.1.2  
+kableExtra_1.3.4  
+gtsummary_1.7.2  
+gt_0.9.0  
+naniar_1.0.0  
+lubridate_1.9.3  
+forcats_1.0.0   
+stringr_1.5.0  
+dplyr_1.1.3  
+purrr_1.0.1  
+readr_2.1.4  
+tidyr_1.3.0  
+tibble_3.2.1  
+ggplot2_3.4.3  
+tidyverse_2.0.0  
+formatR_1.14  
 

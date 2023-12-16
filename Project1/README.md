@@ -37,7 +37,7 @@ Using the Wilcoxon test at a 0.05 significance level, our findings indicate:
 3. Postnatal smoking exposure (from year 1 to year 5) significantly affects children's scores in Expressive Suppression.
 
 ### Interrelatedness between Externalizing Behaviors
-![Interrelatedness between Externalizing Behaviors](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F3.png)
+![Interrelatedness between Externalizing Behaviors](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F3.png){width = 50%}
 
 Some notable correlation clusters observed among the variables are:
 1. ADHD Inattentive, ADHD Hyperactive, Attention Problem, and Externalizing Problem.
