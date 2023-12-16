@@ -12,7 +12,7 @@ In this study, we reference two datasets: 1) The Framingham Heart Study, and 2) 
 
 The Framingham Heart Study (Wilson, 1998) is a long-term, prospective investigation into the causes of cardiovascular disease within a cohort of free-living individuals in Framingham, Massachusetts. This dataset includes clinical examination data such as cardiovascular disease risk factors and indicators like blood pressure. Additionally, it documents whether the participants have experienced cardiovascular events, including myocardial infarction (hospitalized and silent or unrecognized), fatal coronary heart disease, atherothrombotic infarction, cerebral embolism, intracerebral hemorrhage, subarachnoid hemorrhage, or fatal cerebrovascular disease. We regard this dataset as the source population, which we use to construct a model to identify individuals at high risk for cardiovascular events.
 
-Conversely, NHANES data represents a nationally representative sample of adults and children in the United States. Data collection encompasses detailed, face-to-face interviews, physical and physiological examinations, and laboratory tests, some of which overlap with data from the Framingham Heart Study. However, NHANES does not include long-term outcome information such as cardiovascular disease events. We consider this dataset the target population and aim to determine how well a model built from the source population performs with this data.
+Conversely, NHANES data (NHANES, 1999-2004) represents a nationally representative sample of adults and children in the United States. Data collection encompasses detailed, face-to-face interviews, physical and physiological examinations, and laboratory tests, some of which overlap with data from the Framingham Heart Study. However, NHANES does not include long-term outcome information such as cardiovascular disease events. We consider this dataset the target population and aim to determine how well a model built from the source population performs with this data.
 
 The common variables extracted from both datasets include: 1) TOTCHOL, serum total cholesterol (mg/dL); 2) SYSBP, systolic blood pressure; 3) AGE, age at examination; 4) HDLC, high-density lipoprotein cholesterol (mg/dL); 5) SEX, participant sex; 6) CURSMOKE, current cigarette smoking at examination; 7) DIABETES, diabetic status; 8) BPMEDS, use of anti-hypertensive medication at examination.
 
@@ -20,9 +20,11 @@ In terms of preprocessing, we generate two new variables derived from SYSBP and 
 
 ## Reference 
 
-Wilson PW, D'Agostino RB, Levy D, Belanger AM, Silbershatz H, Kannel WB. Prediction of coronary heart disease using risk factor categories. Circulation. 1998 May 12;97(18):1837-47. doi: 10.1161/01.cir.97.18.1837. PMID: 9603539.  
+Wilson, P. W., D'Agostino, R. B., Levy, D., Belanger, A. M., Silbershatz, H., & Kannel, W. B. (1998). Prediction of coronary heart disease using risk factor categories. Circulation, 97(18), 1837-1847. https://doi.org/10.1161/01.cir.97.18.1837
 
-Steingrimsson JA, Gatsonis C, Li B, Dahabreh IJ. Transporting a Prediction Model for Use in a New Target Population. Am J Epidemiol. 2023 Feb 1;192(2):296-304. doi: 10.1093/aje/kwac128. PMID: 35872598.
+Steingrimsson, J. A., Gatsonis, C., Li, B., & Dahabreh, I. J. (2023). Transporting a prediction model for use in a new target population. American Journal of Epidemiology, 192(2), 296-304. https://doi.org/10.1093/aje/kwac128
+
+Centers for Disease Control and Prevention. (1999-2004). National Center for Health Statistics. National Health and Nutrition Examination Survey Data. U.S. Department of Health and Human Services. http://www.cdc.gov/nchs/nhanes.htm
 
 ## Software and Packages
 
