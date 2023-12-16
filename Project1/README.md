@@ -25,9 +25,11 @@ With other potential variables, such as parental externalizing behaviors and dem
 ## Result 
 
 ### Relationship between Maternal Smoking and Smoking Exposure
-![Summary Table for Maternal Smoking](https://github.com/amirahff/PHP2550/blob/Project1/images/P1_F1.png)
 
-![Summary Table for Smoking Exposure](https://github.com/amirahff/PHP2550/blob/Project1/images/P1_F2.png)
+
+![Summary Table for Maternal Smoking](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F1.png)
+
+![Summary Table for Smoking Exposure](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F2.png)
 
 Using the Wilcoxon test at a 0.05 significance level, our findings indicate:
 1. Children of mothers who smoked during pregnancy exhibit statistically significantly different scores in ADHD Hyperactivity.
@@ -35,7 +37,7 @@ Using the Wilcoxon test at a 0.05 significance level, our findings indicate:
 3. Postnatal smoking exposure (from year 1 to year 5) significantly affects children's scores in Expressive Suppression.
 
 ### Interrelatedness between Externalizing Behaviors
-![Interrelatedness between Externalizing Behaviors](https://github.com/amirahff/PHP2550/blob/Project1/images/P1_F3.png)
+![Interrelatedness between Externalizing Behaviors](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F3.png)
 
 Some notable correlation clusters observed among the variables are:
 1. ADHD Inattentive, ADHD Hyperactive, Attention Problem, and Externalizing Problem.
@@ -45,7 +47,7 @@ Some notable correlation clusters observed among the variables are:
 5. No correlation observed on Cognitive Reappraisal.
 
 ### Correlation between Externalizing Behaviors with Other Factors
-![Correlation between Externalizing Behaviors with Other Factors](https://github.com/amirahff/PHP2550/blob/Project1/images/P1_F4.png)
+![Correlation between Externalizing Behaviors with Other Factors](https://github.com/amirahff/PHP2550/blob/main/Project1/images/P1_F4.png)
 
 Children's externalizing behaviors predominantly correlate with parental attention and internalizing issues, alongside consistent direct or environmental prenatal and postnatal smoking exposure. Additionally, parental involvement is negatively correlated with substance use in children.
 
